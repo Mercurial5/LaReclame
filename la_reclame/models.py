@@ -64,3 +64,23 @@ class Categories(db.Model):
             'id': self.id,
             'category_name': self.category_name
         }
+
+class Reviews(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    item_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
+    title = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.String(255), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    created = db.Column(db.DATETIME, nullable=False, default=datetime.now)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'item_id': self.item_id,
+            'user_id': self.user_id,
+            'title': self.title,
+            'description': self.description,
+            'rating': self.rating,
+            'created': self.created,
+        }

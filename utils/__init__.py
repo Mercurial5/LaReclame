@@ -30,7 +30,7 @@ def not_auth(func):
 
 def send_email(to: str, token_link: str):
     message = EmailMessage()
-    message['Subject'] = 'Email verification'
+    message['Subject'] = 'Email verification' 
     message['From'] = getenv('SMTP_SENDER')
     message['To'] = to
     message.set_content('Your verification link is %s' % token_link)

@@ -1,7 +1,7 @@
 from flask import render_template, session, request, flash
 from flask import redirect, url_for
 from la_reclame.items import items
-from la_reclame.models import Items, Users, Categories, PriceTypes
+from la_reclame.models import Items, Users, Categories, PriceTypes, Reviews
 from la_reclame import db
 from utils import auth_required, picturesDB
 
@@ -39,7 +39,7 @@ def item_page(item_id: int):
 
     user = Users.query.get(item.user_id)
 
-    return render_template('item-page.html', user=user, item=item)
+    return render_template('item-page.html', user=user, item=item, reviews=Reviews.query.filter_by(item_id=item_id))
 
 
 @items.route('/add-item', methods=['GET', 'POST'])
@@ -79,3 +79,26 @@ def add_item():
 
     flash('Item is added!', 'success')
     return redirect(url_for('items.add_item'))
+
+@items.route('/<item_id>/add/review', methods=['GET', 'POST'])
+@auth_required
+def add_review(item_id: int):
+
+    user_id = session['user'].id
+    title = request.form.get('title')
+    description = request.form.get('description')
+    rating = request.form.get('rating')
+
+    if None in [title, description, rating]:
+        flash('Not all data was given for the review!', 'danger')
+
+    if Items.query.get(item_id) is None:
+        flash('Item with such ID was not found!', 'danger')
+
+    review = Reviews(item_id=item_id, user_id=user_id, title=title, description=description, rating=rating)
+
+    db.session.add(review)
+    db.session.commit()
+
+    flash('Review is added!', 'success')
+    return redirect(url_for('items.item_page', item_id=item_id))
