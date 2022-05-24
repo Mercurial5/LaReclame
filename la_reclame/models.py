@@ -87,3 +87,10 @@ class Reviews(db.Model):
             'rating': self.rating,
             'created': self.created,
         }
+
+
+class Ratings(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, unique=True, nullable=False)
+    rating = db.Column(db.Integer, nullable=False, default=0)
+    review_count = db.Column(db.Integer, nullable=False, default=0)

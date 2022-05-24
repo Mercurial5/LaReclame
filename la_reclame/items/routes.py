@@ -80,6 +80,7 @@ def add_item():
     flash('Item is added!', 'success')
     return redirect(url_for('items.add_item'))
 
+
 @items.route('/<item_id>/add/review', methods=['GET', 'POST'])
 @auth_required
 def add_review(item_id: int):
@@ -89,13 +90,14 @@ def add_review(item_id: int):
     description = request.form.get('description')
     rating = request.form.get('rating')
 
-    if None in [title, description, rating]:
-        flash('Not all data was given for the review!', 'danger')
-
     if Items.query.get(item_id) is None:
         flash('Item with such ID was not found!', 'danger')
 
     review = Reviews(item_id=item_id, user_id=user_id, title=title, description=description, rating=rating)
+
+    item = Items.query.get(item_id)
+    user = Users.query.get(item.user_id)
+    # user.rating =
 
     db.session.add(review)
     db.session.commit()
