@@ -1,7 +1,7 @@
 from flask import render_template, request, session
 from flask import flash
 from la_reclame.users import users
-from la_reclame.models import Users, Items
+from la_reclame.models import Users, Items, Ratings
 from utils import auth_required, picturesDB
 from la_reclame import db
 
@@ -15,8 +15,14 @@ def profile(username: str):
         return '404\nUser not found'
 
     items = Items.query.filter_by(user_id=user.id).all()
+    rating = Ratings.query.filter_by(user_id=user.id).first()
 
-    return render_template('profile.html', user=user, items=items)
+    if rating is None or rating.review_count == 0:
+        rating = 0.0
+    else:
+        rating = rating.rating / rating.review_count
+
+    return render_template('profile.html', user=user, items=items, rating=rating)
 
 
 @users.route('/settings', methods=['GET', 'POST'])

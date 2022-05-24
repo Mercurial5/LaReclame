@@ -38,8 +38,14 @@ def item_page(item_id: int):
     item.all_pictures = pictures
 
     user = Users.query.get(item.user_id)
+    rating = Ratings.query.filter_by(user_id=user.id).first()
+    if rating is None or rating.review_count == 0:
+        rating = 0.0
+    else:
+        rating = rating.rating / rating.review_count
 
-    return render_template('item-page.html', user=user, item=item, reviews=Reviews.query.filter_by(item_id=item_id).all())
+    return render_template('item-page.html', user=user, item=item,
+                           reviews=Reviews.query.filter_by(item_id=item_id).all(), rating=round(rating, 1))
 
 
 @items.route('/add-item', methods=['GET', 'POST'])
@@ -84,7 +90,6 @@ def add_item():
 @items.route('/<item_id>/add/review', methods=['GET', 'POST'])
 @auth_required
 def add_review(item_id: int):
-
     user_id = session['user'].id
     title = request.form.get('title')
     description = request.form.get('description')
