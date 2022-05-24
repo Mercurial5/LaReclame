@@ -1,7 +1,7 @@
 from flask import render_template, session, request, flash
 from flask import redirect, url_for
 from la_reclame.items import items
-from la_reclame.models import Items, Users, Categories, PriceTypes, Reviews
+from la_reclame.models import Items, Users, Categories, PriceTypes, Reviews, Ratings
 from la_reclame import db
 from utils import auth_required, picturesDB
 
@@ -88,16 +88,22 @@ def add_review(item_id: int):
     user_id = session['user'].id
     title = request.form.get('title')
     description = request.form.get('description')
-    rating = request.form.get('rating')
+    rating_score = int(request.form.get('rating'))
 
     if Items.query.get(item_id) is None:
         flash('Item with such ID was not found!', 'danger')
 
-    review = Reviews(item_id=item_id, user_id=user_id, title=title, description=description, rating=rating)
+    review = Reviews(item_id=item_id, user_id=user_id, title=title, description=description, rating=rating_score)
 
     item = Items.query.get(item_id)
-    user = Users.query.get(item.user_id)
-    # user.rating =
+    rating = Ratings.query.filter_by(user_id=item.user_id).first()
+
+    if rating is None:
+        rating = Ratings(user_id=item.user_id, rating=rating_score, review_count=1)
+        db.session.add(rating)
+    else:
+        rating.rating += rating_score
+        rating.review_count += 1
 
     db.session.add(review)
     db.session.commit()
