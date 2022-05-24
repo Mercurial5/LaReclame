@@ -40,6 +40,8 @@ class Items(db.Model):
     main_picture = db.Column(db.String(255))
 
     def serialize(self):
+        pictures = [] if self.main_picture in ['', None] else [self.main_picture]
+        pictures.extend(self.pictures.split(',') if self.pictures not in ['', None] else [])
         return {
             'id': self.id,
             'user_id': self.user_id,
@@ -50,8 +52,7 @@ class Items(db.Model):
             'is_active': self.is_active,
             'price_type': self.price_type.name,
             'price': self.price,
-            'pictures': self.pictures,
-            'main_picture': self.main_picture,
+            'pictures': pictures
         }
 
 
