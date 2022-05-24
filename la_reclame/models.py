@@ -7,6 +7,7 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), nullable=False, unique=True)
     bio = db.Column(db.Text)
+    rating = db.Column(db.Float, nullable=False, default=0.0)
     password = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True)
     registered = db.Column(db.DATETIME, nullable=False, default=datetime.now)
@@ -18,6 +19,7 @@ class Users(db.Model):
             'id': self.id,
             'username': self.username,
             'bio': self.bio,
+            'rating': self.rating,
             'password': self.password,
             'email': self.email,
             'registered': str(self.registered),
@@ -64,6 +66,7 @@ class Categories(db.Model):
             'id': self.id,
             'category_name': self.category_name
         }
+
 
 class Reviews(db.Model):
     id = db.Column(db.Integer, primary_key=True)
