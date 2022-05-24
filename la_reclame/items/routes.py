@@ -39,7 +39,7 @@ def item_page(item_id: int):
 
     user = Users.query.get(item.user_id)
 
-    return render_template('item-page.html', user=user, item=item, reviews=Reviews.query.filter_by(item_id=item_id))
+    return render_template('item-page.html', user=user, item=item, reviews=Reviews.query.filter_by(item_id=item_id).all())
 
 
 @items.route('/add-item', methods=['GET', 'POST'])
