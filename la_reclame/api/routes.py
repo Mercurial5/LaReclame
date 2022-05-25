@@ -8,6 +8,7 @@ from utils import picturesDB, send_email, PriceTypes
 from urllib.parse import quote
 from os import getenv
 import base64
+import ast
 
 url_serializer = URLSafeTimedSerializer(getenv('SECRET_KEY'))
 
@@ -81,6 +82,21 @@ def get_items():
     return dict(status='ok', items=[item.serialize() for item in items_list])
 
 
+@api.route('/get/item', methods=['POST'])
+def get_item():
+    item_id = request.form.get('item_id')
+
+    if None in [item_id]:
+        return dict(status='error', error='Not all data was given.')
+
+    item = Items.query.get(item_id)
+
+    if item is None:
+        return dict(status='error', error='Item not found.')
+
+    return dict(status='ok', item=item.serialize())
+
+
 @api.route('/add/item', methods=['POST'])
 def add_item():
     user_id = int(request.form.get('user_id'))
@@ -133,9 +149,16 @@ def update_profile_picture():
 def get_item_image():
     table = request.form.get('table')
     filename = request.form.get('filename')
-    path = picturesDB.get_picture_path(table, filename)
-    image_base64 = base64.b64encode(open(path, 'rb').read())
-    return dict(status='ok', image=quote(image_base64, safe=''))
+
+    try:
+        filenames = ast.literal_eval(filename)
+        filenames = [quote(base64.b64encode(open(picturesDB.get_picture_path(table, filename), 'rb').read()), safe='')
+                     for filename in filenames]
+        return dict(status='ok', image=filenames)
+    except:
+        path = picturesDB.get_picture_path(table, filename)
+        image_base64 = base64.b64encode(open(path, 'rb').read())
+        return dict(status='ok', image=quote(image_base64, safe=''))
 
 
 @api.route('/categories', methods=['POST'])
@@ -144,10 +167,12 @@ def get_categories():
 
     return dict(status='ok', categories=categories)
 
+
 @api.route('/<item_id>/reviews', methods=['POST'])
 def item_reviews(item_id: int):
     reviews = [review.serialize() for review in Reviews.query.filter_by(item_id=item_id).all()]
     return dict(status='ok', reviews=reviews)
+
 
 @api.route('/update-user-info', methods=['POST'])
 def update_user_info():
