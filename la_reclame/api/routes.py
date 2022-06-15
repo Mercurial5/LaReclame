@@ -36,25 +36,25 @@ def login():
 def register():
     username = request.form.get('username')
     password = request.form.get('password')
-    email = request.form.get('email')
+    barcode = request.form.get('barcode')
 
-    if None in [username, password, email]:
+    if None in [username, password, barcode]:
         return dict(status='error', error='Not all data was given.')
 
     if Users.query.filter_by(username=username).first() is not None:
         return dict(status='error', error='Username is already taken.')
 
-    if Users.query.filter_by(email=email).first() is not None:
-        return dict(status='error', error='Email is already taken.')
+    if Users.query.filter_by(barcode=barcode).first() is not None:
+        return dict(status='error', error='Barcode is already taken.')
 
-    user = Users(username=username, email=email, password=sha256_crypt.hash(password))
+    user = Users(username=username, barcode=barcode, password=sha256_crypt.hash(password))
     db.session.add(user)
     db.session.commit()
 
-    token = url_serializer.dumps(email, salt=getenv('SECRET_KEY_EMAIL_CONFIRM'))
+    token = url_serializer.dumps(barcode, salt=getenv('SECRET_KEY_EMAIL_CONFIRM'))
     token_link = url_for('auth.confirm_email', token=token, _external=True)
 
-    send_email(email, token_link)
+    send_email(barcode + '@astanait.edu.kz', token_link)
 
     return dict(status='ok')
 
