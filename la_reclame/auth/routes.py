@@ -83,13 +83,13 @@ def logout():
 @auth.route('/confirm-email/<token>')
 def confirm_email(token: str):
     try:
-        email = url_serializer.loads(token, salt=getenv('SECRET_KEY_EMAIL_CONFIRM'), max_age=900)
+        barcode = url_serializer.loads(token, salt=getenv('SECRET_KEY_EMAIL_CONFIRM'), max_age=900)
     except SignatureExpired:
         return '<h1>The token is expired!</h1>'
     except BadTimeSignature:
         return '<h1>This isn\'t the right token!</h1>'
 
-    user = Users.query.filter_by(email=email).first()
+    user = Users.query.filter_by(barcode=barcode).first()
     user.is_active = True
     db.session.commit()
 
