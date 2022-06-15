@@ -51,9 +51,9 @@
                                 <p class="d-inline">{{ item.created }}</p></p></div>
 
                             <p class="text-end text-secondary item-author">Seller: <a
-                                    href="{{ url_for('users.profile', username=user.username) }}"
+                                    href="{{ url_for('users.profile', username=item_user.username) }}"
                                     class="text-primary text-decoration-none"
-                                    role="button">{{ user.username }}</a></p>
+                                    role="button">{{ item_user.username }}</a></p>
                         </div>
                     </div>
                 </div>
@@ -140,8 +140,8 @@
                     <div class="card mb-5">
                         <div class="card-body">
                             <div class="author-box d-flex justify-content w-100">
-                                {% if user.picture %}
-                                <img src="{{ url_for('utils.get_picture', table='profile-pictures', filename=user.picture) }}"
+                                {% if item_user.picture %}
+                                <img src="{{ url_for('utils.get_picture', table='profile-pictures', filename=item_user.picture) }}"
                                      alt="Admin" class="p-1"
                                      width="150">
                                 {% else %}
@@ -149,7 +149,7 @@
                                 {% endif %}
                                 <div class="author-info w-100 ps-5">
                                     <h3 class="text-start"><a href="#" class="text-decoration-none text-dark">{{
-                                        user.username }}</a></h3>
+                                        item_user.username }}</a></h3>
                                     <p class="text-secondary">Rating: {{ rating }}</p>
                                     <div class="contact-box mx-auto">
                                         <a type="button" class="btn btn-outline-secondary btn-sm">Contact</a>

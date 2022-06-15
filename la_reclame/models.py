@@ -95,7 +95,7 @@ class Reviews(db.Model):
             'title': self.title,
             'description': self.description,
             'rating': self.rating,
-            'created': self.created,
+            'created': str(self.created),
         }
 
 

@@ -44,8 +44,8 @@ def item_page(item_id: int):
     else:
         rating = rating.rating / rating.review_count
 
-    return render_template('item-page.html', user=user, item=item,
-                           reviews=Reviews.query.filter_by(item_id=item_id).all(), rating=round(rating, 1))
+    return render_template('item-page.html', user=session['user'], item_user=user, item=item,
+                           reviews=Reviews.query.filter_by(item_id=item_id).order_by(Reviews.id.desc()).all(), rating=round(rating, 1))
 
 
 @items.route('/add-item', methods=['GET', 'POST'])
