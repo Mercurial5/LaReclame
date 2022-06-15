@@ -8,7 +8,7 @@ class Users(db.Model):
     username = db.Column(db.String(255), nullable=False, unique=True)
     bio = db.Column(db.Text)
     password = db.Column(db.String(255), nullable=False)
-    email = db.Column(db.String(255), nullable=False, unique=True)
+    barcode = db.Column(db.Integer, nullable=False, unique=True)
     registered = db.Column(db.DATETIME, nullable=False, default=datetime.now)
     is_active = db.Column(db.Boolean, nullable=False, default=False)
     picture = db.Column(db.String(255))
@@ -20,7 +20,7 @@ class Users(db.Model):
             'bio': self.bio,
             'rating': self.get_rating(),
             'password': self.password,
-            'email': self.email,
+            'barcode': self.barcode,
             'registered': str(self.registered),
             'is_active': self.is_active,
             'picture': self.picture
