@@ -42,7 +42,7 @@ def register():
         return render_template('register.html')
 
     username = request.form.get('username')
-    email = request.form.get('email')
+    barcode = request.form.get('barcode')
     password = request.form.get('password')
     confirm_password = request.form.get('password-confirm')
 
@@ -52,20 +52,20 @@ def register():
     if Users.query.filter_by(username=username).first() is not None:
         flash('Username is already taken!', 'danger')
 
-    if Users.query.filter_by(email=email).first() is not None:
+    if Users.query.filter_by(barcode=barcode).first() is not None:
         flash('Email is already taken!', 'danger')
 
     if len(get_flashed_messages()) != 0:
         return render_template('register.html')
 
-    user = Users(username=username, email=email, password=sha256_crypt.hash(password))
+    user = Users(username=username, barcode=barcode, password=sha256_crypt.hash(password))
     db.session.add(user)
     db.session.commit()
 
-    token = url_serializer.dumps(email, salt=getenv('SECRET_KEY_EMAIL_CONFIRM'))
+    token = url_serializer.dumps(barcode, salt=getenv('SECRET_KEY_EMAIL_CONFIRM'))
     token_link = url_for('auth.confirm_email', token=token, _external=True)
 
-    send_email(email, token_link)
+    send_email(barcode + '@astanait.edu.kz', token_link)
 
     flash('User was created!', 'success')
 
