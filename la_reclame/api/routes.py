@@ -105,6 +105,16 @@ def add_item():
     description = request.form.get('description')
     price_type = request.form.get('price_type')
     price = request.form.get('price')
+    pictures = request.form.get('pictures')
+
+    pictures = ast.literal_eval(pictures)
+
+    if len(pictures) != 0:
+        main_picture = pictures[0]
+        pictures = pictures[1:]
+
+    main_picture = picturesDB.add_picture_from_app('item-pictures', main_picture)
+    pictures = [picturesDB.add_picture_from_app('item-pictures', picture) for picture in pictures]
 
     if None in [user_id, title, description, category_id, price_type] or price_type == 'fixed' and price is None:
         return dict(status='error', error='Not all data was given.')
@@ -118,7 +128,7 @@ def add_item():
         return dict(status='error', error='Category with such id not found.')
 
     item = Items(user_id=user_id, title=title, description=description, category_id=category_id,
-                 price_type=PriceTypes[price_type], price=price)
+                 price_type=PriceTypes[price_type], price=price, main_picture=main_picture, pictures=','.join(pictures))
     db.session.add(item)
     db.session.commit()
 
