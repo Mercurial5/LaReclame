@@ -170,7 +170,7 @@ def get_categories():
 
 @api.route('/<item_id>/reviews', methods=['POST'])
 def item_reviews(item_id: int):
-    reviews = [review.serialize() for review in Reviews.query.filter_by(item_id=item_id).all()]
+    reviews = [review.serialize() for review in Reviews.query.filter_by(item_id=item_id).order_by(Reviews.id.desc()).all()]
     return dict(status='ok', reviews=reviews)
 
 
@@ -211,4 +211,41 @@ def get_user_info():
 
     user = Users.query.get(user_id)
 
-    return dict(id=user.id, username=user.username)
+    filename = user.picture
+    if filename is not None:
+        table = 'profile-pictures'
+        path = picturesDB.get_picture_path(table, filename)
+        image_base64 = base64.b64encode(open(path, 'rb').read())
+        image = quote(image_base64, safe='')
+    else:
+        image = ''
+
+    return dict(id=user.id, username=user.username, image=image)
+
+
+@api.route('/add/review', methods=['POST'])
+def add_review():
+    user_id = request.form.get('user_id')
+    item_id = request.form.get('item_id')
+    title = request.form.get('title')
+    description = request.form.get('description')
+    rating_score = int(request.form.get('rating'))
+
+    print(rating_score)
+
+    review = Reviews(item_id=item_id, user_id=user_id, title=title, description=description, rating=rating_score)
+
+    item = Items.query.get(item_id)
+    rating = Ratings.query.filter_by(user_id=item.user_id).first()
+
+    if rating is None:
+        rating = Ratings(user_id=item.user_id, rating=rating_score, review_count=1)
+        db.session.add(rating)
+    else:
+        rating.rating += rating_score
+        rating.review_count += 1
+
+    db.session.add(review)
+    db.session.commit()
+
+    return dict(status='ok')
