@@ -18,12 +18,23 @@ class Users(db.Model):
             'id': self.id,
             'username': self.username,
             'bio': self.bio,
+            'rating': self.get_rating(),
             'password': self.password,
             'email': self.email,
             'registered': str(self.registered),
             'is_active': self.is_active,
             'picture': self.picture
         }
+
+    def get_rating(self):
+        rating = Ratings.query.filter_by(user_id=self.id).first()
+
+        if rating is None or rating.review_count == 0:
+            rating = 0.0
+        else:
+            rating = rating.rating / rating.review_count
+
+        return rating
 
 
 class Items(db.Model):
