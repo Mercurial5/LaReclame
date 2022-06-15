@@ -180,7 +180,8 @@ def get_categories():
 
 @api.route('/<item_id>/reviews', methods=['POST'])
 def item_reviews(item_id: int):
-    reviews = [review.serialize() for review in Reviews.query.filter_by(item_id=item_id).order_by(Reviews.id.desc()).all()]
+    reviews = [review.serialize() for review in
+               Reviews.query.filter_by(item_id=item_id).order_by(Reviews.id.desc()).all()]
     return dict(status='ok', reviews=reviews)
 
 
@@ -188,6 +189,7 @@ def item_reviews(item_id: int):
 def update_user_info():
     user_id = request.form.get('user_id')
     username = request.form.get('username')
+    telegram = request.form.get('telegram')
     bio = request.form.get('bio')
     password = request.form.get('password')
 
@@ -200,6 +202,7 @@ def update_user_info():
         return dict(status='error', error='User with such id not found.')
 
     username = user.username if username in [None, ''] else username
+    telegram = user.telegram if telegram in [None, ''] else telegram
     bio = user.bio if bio in [None, ''] else bio
     password = user.password if password in [None, ''] else sha256_crypt.hash(password)
 
@@ -207,6 +210,7 @@ def update_user_info():
         return dict(status='error', error='%s already taken!' % username)
 
     user.username = username
+    user.telegram = telegram
     user.bio = bio
     user.password = password
 
@@ -230,7 +234,8 @@ def get_user_info():
     else:
         image = ''
 
-    return dict(id=user.id, username=user.username, image=image)
+    return dict(id=user.id, username=user.username, telegram=user.telegram, bio=user.bio, image=image,
+                rating=get_rating(user.id))
 
 
 @api.route('/add/review', methods=['POST'])
@@ -240,8 +245,6 @@ def add_review():
     title = request.form.get('title')
     description = request.form.get('description')
     rating_score = int(request.form.get('rating'))
-
-    print(rating_score)
 
     review = Reviews(item_id=item_id, user_id=user_id, title=title, description=description, rating=rating_score)
 
@@ -259,3 +262,14 @@ def add_review():
     db.session.commit()
 
     return dict(status='ok')
+
+
+def get_rating(user_id):
+    rating = Ratings.query.filter_by(user_id=user_id).first()
+
+    if rating is None or rating.review_count == 0:
+        rating = 0.0
+    else:
+        rating = rating.rating / rating.review_count
+
+    return rating
