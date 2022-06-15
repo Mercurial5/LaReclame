@@ -54,7 +54,7 @@
             <div class="col-sm-2 border-end p-0">
                 {% if item.main_picture %}
                 <img src="{{ url_for('utils.get_picture', table='item-pictures', filename=item.main_picture) }}"
-                     width="220" height="164" class="rounded-start">
+                     width="100%" height="100%" class="rounded-start">
                 {% else %}
                 <img src="/static/images/no-image.jpg" class="img-fluid rounded-start">
                 {% endif %}
