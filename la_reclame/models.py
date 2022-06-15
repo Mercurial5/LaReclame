@@ -9,6 +9,7 @@ class Users(db.Model):
     bio = db.Column(db.Text)
     password = db.Column(db.String(255), nullable=False)
     barcode = db.Column(db.Integer, nullable=False, unique=True)
+    telegram = db.Column(db.String(255), default=None)
     registered = db.Column(db.DATETIME, nullable=False, default=datetime.now)
     is_active = db.Column(db.Boolean, nullable=False, default=False)
     picture = db.Column(db.String(255))
@@ -21,6 +22,7 @@ class Users(db.Model):
             'rating': self.get_rating(),
             'password': self.password,
             'barcode': self.barcode,
+            'telegram': self.telegram,
             'registered': str(self.registered),
             'is_active': self.is_active,
             'picture': self.picture
