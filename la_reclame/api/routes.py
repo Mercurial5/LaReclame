@@ -1,7 +1,7 @@
 from itsdangerous import URLSafeTimedSerializer
 from flask import request, url_for, send_file
 from passlib.hash import sha256_crypt
-from la_reclame.models import Users, Items, Categories, Reviews
+from la_reclame.models import Users, Items, Categories, Reviews, Ratings
 from la_reclame.api import api
 from la_reclame import db
 from utils import picturesDB, send_email, PriceTypes
@@ -172,6 +172,22 @@ def get_categories():
 def item_reviews(item_id: int):
     reviews = [review.serialize() for review in Reviews.query.filter_by(item_id=item_id).all()]
     return dict(status='ok', reviews=reviews)
+
+
+@api.route('/<username>/rating', methods=['POST'])
+def user_rating(username: str):
+    user = Users.query.filter_by(username=username).first()
+
+    if user is None:
+        return '404\nUser not found'
+
+    rating = Ratings.query.filter_by(user_id=user.id).first()
+
+    if rating is None or rating.review_count == 0:
+        rating = 0.0
+    else:
+        rating = rating.rating / rating.review_count
+    return dict(status='ok', rating=rating)
 
 
 @api.route('/update-user-info', methods=['POST'])
