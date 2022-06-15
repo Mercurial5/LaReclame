@@ -203,3 +203,12 @@ def update_user_info():
     db.session.commit()
 
     return dict(status='ok')
+
+
+@api.route('/get-user-info', methods=['POST'])
+def get_user_info():
+    user_id = request.form.get('user_id')
+
+    user = Users.query.get(user_id)
+
+    return dict(id=user.id, username=user.username)
