@@ -19,6 +19,16 @@
                            value="{{ user.username }}"
                            required>
                 </div>
+                <div class="mb-3">
+                    <label for="bio-input" class="form-label">Bio</label>
+                    <input type="text" id="bio-input" class="form-control" name="bio"
+                           {% if user.bio %} value="{{ user.bio }}" {% endif %}>
+                </div>
+                <div class="mb-3">
+                    <label for="telegram-input" class="form-label">Telegram</label>
+                    <input type="text" id="telegram-input" class="form-control" name="telegram"
+                           {% if user.telegram %} value="{{ user.telegram }}" {% endif %}>
+                </div>
                 <div class="d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary px-5">Save</button>
                 </div>

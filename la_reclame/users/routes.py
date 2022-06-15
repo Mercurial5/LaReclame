@@ -20,9 +20,10 @@ def profile(username: str):
     if rating is None or rating.review_count == 0:
         rating = 0.0
     else:
-        rating = rating.rating / rating.review_count
+        rating = rating.rating // rating.review_count
 
-    return render_template('profile.html', user=user, items=items, rating=rating)
+
+    return render_template('profile.html', user=session['user'], profile_user=user, items=items, rating=rating)
 
 
 @users.route('/settings', methods=['GET', 'POST'])
@@ -32,17 +33,21 @@ def settings():
         return render_template('settings.html', user=session['user'])
 
     username = request.form.get('username')
+    bio = request.form.get('bio')
+    telegram = request.form.get('telegram')
     user = Users.query.get(session['user'].id)
 
     if user.username != username and Users.query.filter_by(username=username).first() is not None:
         flash('Username is already taken', 'danger')
-    elif user.username != username:
+    elif user.username != username or user.bio != bio or user.telegram != telegram :
         user.username = username
+        user.bio = bio
+        user.telegram = telegram
         db.session.commit()
 
         session['user'] = user
 
-        flash('Username is changes', 'success')
+        flash('Profile was changed', 'success')
 
     picture = request.files.get('profile-picture')
     if picture:

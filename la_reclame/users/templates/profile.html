@@ -1,7 +1,7 @@
 {% from 'macros.html' import item_card, empty_card with context %}
 {% extends 'main_with_header.html' %}
 
-{% block title %} {{ user.username }} {% endblock %}
+{% block title %} {{ profile_user.username }} {% endblock %}
 
 {% block body %}
 <div class="container mt-5">
@@ -11,14 +11,17 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex flex-column align-items-center text-center">
-                            {% if user.picture %}
-                            <img src="{{ url_for('utils.get_picture', table='profile-pictures', filename=user.picture) }}" alt="Admin" class="p-1"
+                            {% if profile_user.picture %}
+                            <img src="{{ url_for('utils.get_picture', table='profile-pictures', filename=profile_user.picture) }}" alt="Admin" class="p-1"
                                  width="250">
                             {% else %}
                             <img src="/static/images/no-image.jpg" class="p-1" width="150">
                             {% endif %}
                             <div class="mt-4 mb-3">
-                                <h4>{{ user['username'] }}</h4>
+                                <h4>{{ profile_user['username'] }}</h4>
+                                {% if profile_user.telegram %}
+                                <p class="text-secondary mb-1">Telegram: @{{ profile_user.telegram }}</p>
+                                {% endif %}
                                 <p class="text-secondary mb-1">Rating: {{ rating }}</p>
                             </div>
                         </div>
