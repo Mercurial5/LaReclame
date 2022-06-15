@@ -19,9 +19,9 @@ def items_home():
 
     filter_by = request.values.get('filter_by', '')
     if filter_by != '':
-        items_list = items_list.filter_by(category_id=filter_by).all()
-    else:
-        items_list = items_list.all()
+        items_list = items_list.filter_by(category_id=filter_by)
+
+    items_list = items_list.order_by(Items.id.desc()).all()
 
     return render_template('items.html', user=session['user'], items=items_list, filter_by=filter_by, search=search)
 
