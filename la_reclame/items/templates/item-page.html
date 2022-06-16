@@ -154,7 +154,7 @@
                                         item_user.username }}</a></h3>
                                     <p class="text-secondary">Rating: {{ rating }}</p>
                                     <div class="contact-box mx-auto">
-                                        <a type="button" class="btn btn-outline-secondary btn-sm">Contact</a>
+                                        <a href="{{ url_for('users.profile', username=item_user.username) }}" type="button" class="btn btn-outline-secondary btn-sm">Contact</a>
                                     </div>
                                 </div>
                             </div>
