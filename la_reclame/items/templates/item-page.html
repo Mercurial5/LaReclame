@@ -148,7 +148,9 @@
                                 <img src="/static/images/no-image.jpg" class="p-1" width="150">
                                 {% endif %}
                                 <div class="author-info w-100 ps-5">
-                                    <h3 class="text-start"><a href="#" class="text-decoration-none text-dark">{{
+                                    <h3 class="text-start"><a
+                                            href="{{ url_for('users.profile', username=item_user.username) }}"
+                                            class="text-decoration-none text-dark">{{
                                         item_user.username }}</a></h3>
                                     <p class="text-secondary">Rating: {{ rating }}</p>
                                     <div class="contact-box mx-auto">
